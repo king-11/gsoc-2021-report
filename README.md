@@ -82,13 +82,13 @@ The architecture for the socket library was decided to be synchronous but nonblo
 For this, I decided to use I/O multiplexing using `select` system calls where the procedure waits until it becomes ready which can mean it becomes readable, writable or a timeout occurred.
 
 
-![blocking.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1629635056200/job0Y6Y0A.png)
+![blocking.png](./blocking.png)
 
 The issue was that calling in normal select will cause the pthread on which chapel qthreads are scheduled to block. Hence, to counter this [qthreads library](https://cs.sandia.gov/qthreads/) provides its own set of system calls that will block but not on the current pthread instead are transferred to another helper pthread where they do blocking.
 
 The outcome was making use of `qt_select` inside of our `sys_select` call.
 
-![Qt_select.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1629635302535/WtDqzyZOn.png)
+![non_blocking.png](./non_blocking.png)
 
 %[https://github.com/chapel-lang/chapel/pull/18019]
 
@@ -197,6 +197,6 @@ proc main() throws {
 
 It was wonderful working with the Chapel community throughout the GSoC project. I would like to thank Michael, Krishna, and Ankush for solving my queries, debugging issues with me, giving constructive suggestions and guiding me through the program. Thanks to Brad, Lydia, Engin, Greg, Paul, and the members of the Chapel Community for helping with their suggestions.
 
-I would like to thank [Shivansh Saini](https://github.com/shivanshs9), @[Nishant Mittal](@nishantwrp), and @[Ashish Kumar](@krashish8) for motivating and guiding me in applying and getting through the whole program.
+I would like to thank @[Shivansh Saini](https://github.com/shivanshs9), @[Nishant Mittal](https://github.com/nishantwrp), and @[Ashish Kumar](https://github.com/krashish8) for motivating and guiding me in applying and getting through the whole program.
 
 Final thanks to Google for organizing this amazing program. I feel GSoC made it easier for me to get started with open source contributions. It was a great lesson on how projects are built and maintained with great quality. I am excited to continue contributing to the open-source community.

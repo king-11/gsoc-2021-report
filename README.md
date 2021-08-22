@@ -49,7 +49,7 @@ My initial task was to look over how other modern-day programming languages impl
 
 Finally, after analyzing implementations of other languages and multiple design discussion sessions with Chapel developers, I made a design pull-request describing the API.
 
-%[https://github.com/chapel-lang/chapel/pull/17899]
+<a href="https://github.com/chapel-lang/chapel/pull/17899"><img src="./17899.png"></a>
 
 ### Changes to Runtime
 
@@ -62,18 +62,18 @@ The module that is storing most of the extern procs, records, and constants is t
 
 All this was done as a part of the below PR and soon will be moved to Socket Module when it gets added in.
 
-%[https://github.com/chapel-lang/chapel/pull/17932]
+<a href="https://github.com/chapel-lang/chapel/pull/17932"><img src="./17932.png"></a>
 
 To treat socket connections like chapel `file` we needed access to their file descriptor for all the operations for this a minor addition was made in runtime to fetch the file descriptor. This allowed us to use Chapel I/O in the Socket Module which handles buffered I/O and keeps the I/O methods consistent across chapel modules.
 
-%[https://github.com/chapel-lang/chapel/pull/17988]
+<a href="https://github.com/chapel-lang/chapel/pull/17988"><img src="./17988.png"></a>
 
 Finally, to resolve Domain Name Service from user inputs like _"https://summerofcode.withgoogle.com/"_ I made some fixes to `getaddrinfo` and constructs related to it whose old implementation had a few issues:
 - Some of the function definitions were not correct which were resulting in segmentation fault and memory leak.
 - `addrinfo` wasn't using the new capabilities of chapel runtime and was not interacting with C code it was defined separately.
 - As `sys_addrinfo_ptr` was an opaque type we can't compare it with `nil` which was necessary for checking end of linked list returned by `getaddrinfo`.
 
-%[https://github.com/chapel-lang/chapel/pull/18072]
+<a href="https://github.com/chapel-lang/chapel/pull/18072"><img src="./18072.png"></a>
 
 ### NonBlocking Procedures
 
@@ -90,11 +90,11 @@ The outcome was making use of `qt_select` inside of our `sys_select` call.
 
 ![non_blocking.png](./non_blocking.png)
 
-%[https://github.com/chapel-lang/chapel/pull/18019]
+<a href="https://github.com/chapel-lang/chapel/pull/18019"><img src="./18019.png"></a>
 
 There were certain hurdles and PR remained stale for some time because we faced hurdles due to bugs in error informing inside of qthread's library procedures, which were resolved by collaborating with qthread's core team. The following is the issue that describes the bugs in detail.
 
-%[https://github.com/Qthreads/qthreads/issues/88]
+<a href="https://github.com/Qthreads/qthreads/issues/88"><img src="./88.png"></a>
 
 ### Socket Module
 
@@ -114,7 +114,7 @@ Along the lines of [Julia](https://docs.julialang.org/en/v1/stdlib/Sockets/#Sock
 
 Currently, all the tests are passing and PR is under review before a major change to the internal architecture while the APIs exposed to users will remain the same.
 
-%[https://github.com/chapel-lang/chapel/pull/17960]
+<a href="https://github.com/chapel-lang/chapel/pull/17960"><img src="./17960.png"></a>
 
 ## Usage of Socket Module
 

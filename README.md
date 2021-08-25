@@ -7,7 +7,9 @@
 
 ## Abstract
 
-[Chapel](https://chapel-lang.org/) is a programming language designed for productive parallel computing at scale.  It simplifies parallel programming through elegant parallel programming constructs. As Chapel can utilize a system to its fullest potential, it seems like one of the ideal solutions to handle millions of network requests. Currently, we can do network programming by using [C Interoperability](https://chapel-lang.org/docs/language/spec/interoperability.html), but those constructs are not intuitive and good enough for users to easily do their tasks.
+[Chapel](https://chapel-lang.org/) is a programming language designed for productive parallel computing at scale.  It simplifies parallel programming through elegant parallel programming constructs. As Chapel can utilize a system to its fullest potential, it seems like one of the ideal solutions to handle millions of network requests.
+
+Currently, we can do network programming by using [C Interoperability](https://chapel-lang.org/docs/language/spec/interoperability.html), but those constructs are not intuitive and good enough for users to easily do their tasks.
 
 ## My Project
 
@@ -116,6 +118,20 @@ Currently, all the tests are passing and PR is under review before a major chang
 
 <a href="https://github.com/chapel-lang/chapel/pull/17960"><img src="./17960.png"></a>
 
+### Libevent Integration
+
+[Libevent](https://libevent.org/) exposes APIs that are more performant and handle more open file descriptors or connections than `select` call ever could. The reason being that libevent uses kernel methods that have a time complexity of `O(1)` unlike select which is `O(N)`.
+
+Libevent works using callbacks but we have to ensure to make it work in a non-blocking and synchronous manner. Integrating libevent was something that was never done in the chapel so it was a completely new experience for me.
+
+The architecture can be best explained with diagrams, so here goes.
+
+![connect with event loop.png](./event_connect.png)
+
+The events are handled by the event loop which runs a callback whenever an event ( read/ write/ timeout ) occurs on the file. It writes back the event's value to a sync variable (passed as an argument to the callback function) transitioning to full state and the procedure waiting on the sync variable is finally woken up.
+
+![event loop.png](./event_loop.png)
+
 ## Usage of Socket Module
 
 A TCP Client in Chapel is as follows:
@@ -182,8 +198,10 @@ proc main() throws {
 
 ## Future Work
 
-- The next step for the socket module will be deciding upon the design for HTTP and TCP Servers that can then be used by users. This might be implemented as a separate module but at its core will like the Socket Module 😉.
-- The changes that we are implementing in the core of the socket library include using [libevent](https://libevent.org/doc/event_8h.html) which will provide better ways for I/O multiplexing like `epoll`, `kqueue`, etc. also making the Socket Module all platform compatible as well as performant.
+- Integrating `libevent` with the chapel channels through an I/O plugin.
+- Running performance tests to analyze the network calls and I/O latency.
+- Supporting opaque types with, the [LLVM](https://llvm.org/) backend.
+- Providing users with libevent as a dependency if they don't have it on their system.
 
 ## Learning
 
@@ -197,6 +215,8 @@ proc main() throws {
 
 It was wonderful working with the Chapel community throughout the GSoC project. I would like to thank Michael, Krishna, and Ankush for solving my queries, debugging issues with me, giving constructive suggestions and guiding me through the program. Thanks to Brad, Lydia, Engin, Greg, Paul, and the members of the Chapel Community for helping with their suggestions.
 
-I would like to thank @[Shivansh Saini](https://github.com/shivanshs9), @[Nishant Mittal](https://github.com/nishantwrp), and @[Ashish Kumar](https://github.com/krashish8) for motivating and guiding me in applying and getting through the whole program.
+I would like to thank [Shivansh Saini](https://github.com/shivanshs9), @[Nishant Mittal](@nishantwrp), and @[Ashish Kumar](@krashish8) for motivating and guiding me in applying and getting through the whole program.
 
-Final thanks to Google for organizing this amazing program. I feel GSoC made it easier for me to get started with open source contributions. It was a great lesson on how projects are built and maintained with great quality. I am excited to continue contributing to the open-source community.
+Final thanks to Google for organizing this amazing program. I feel GSoC made it easier for me to get started with open source contributions. It was a great lesson on how projects are built and maintained with great quality. I am excited to continue contributing to the open-source community
+
+Thanks for reading :) and please share your thoughts. I always like to meet more enthusiastic people, so do reach out to me on [Twitter](https://twitter.com/1108King) or [Linkedin](https://www.linkedin.com/in/lakshyasingh11/) to share your feedback or for any queries. I'd be more than happy to help and connect.
